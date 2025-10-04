@@ -1,1 +1,4 @@
-
+{"level":"info","message":"⌛ Building environment","timeElapsed":143,"timestamp":"2025-10-04T10:21:54.877Z"}
+{"level":"info","message":"⌛ Validating solucion/testExample.wtest","timeElapsed":164,"timestamp":"2025-10-04T10:21:55.065Z"}
+{"level":"info","message":"🧪 Test runner executed on c:\\Desktop\\Personal\\Clase-Wollok","result":{"errored":0,"failed":0,"ok":4},"testsFailed":[],"timeElapsed":342,"timestamp":"2025-10-04T10:21:59.311Z"}
+{"level":"info","message":"🧪 Test runner executed on c:\\Desktop\\Personal\\Clase-Wollok","result":{"errored":0,"failed":0,"ok":4},"testsFailed":[],"timeElapsed":306,"timestamp":"2025-10-04T10:22:15.930Z"}
