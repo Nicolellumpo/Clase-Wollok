@@ -1,27 +1,2 @@
 import example.*
 
-//TEST INTEGRANTE 2
-//test piano Bechstein
-describe "piano Bechstein" {
-  test "Piano en una habitación de 5x5 tiene 25m2" {
-    assert.equals(25, pianoBechstein.metrosCuadrados())
-  }
-  test "Piano en una habitación chica" {
-    assert.equals(true, pianoBechstein.afinado())
-  }
-  test "Costo de un piano en una habitación de 5x5" {
-    assert.equals(10, pianoBechstein.costo())
-  }
-  test "Piano es valioso en una habitación de 5x5" {
-    assert.equals(true, pianoBechstein.esValioso())
-  }
-  /*test "Piano en una habitación chica no es valioso" {
-    assert.equals(false, pianoBechstein.esValioso())
-  }*/
-}
-/*describe "giuseppe" {
-  test "Giuseppe es feliz con una guitarra Fender" {
-    assert.equals(true, giuseppe.esFeliz())
-  }
-}
-*/

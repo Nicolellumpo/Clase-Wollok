@@ -1,71 +1,105 @@
-// TP1 OBJETOS 1
+//EJECICO PRE-PARCIAL - Noticias de ayer , extra
 
-// Todos los Intregrantes (Instrumentos)
- 
-/*object guitarraFender {
-    method instrumento(guitarra) {
-        guitarra.afinado()
-        guitarra.costo()
-        guitarra.esValioso()
-    }
+//Punto 1 
+class Noticia {
+  const property fecha 
+  var property periodista
+  var property importancia
+  var property titulo
+  var property desarrollo 
+
+  method esCopada() =
+    self.tieneImportanciaSuficiente() &&
+    self.esReciente() &&
+    self.criterioCopada()
+
+  method tieneImportanciaSuficiente() = importancia >= 8
+  method esReciente() = fecha > new Date().minusDays(3)
+  method criterioCopada()
+
+  method cantidadPalabras() = desarrollo.size()
+  method estaBienEscrita() =titulo.size() >= 2 && desarrollo.size() > 0
+
+  method esPreferidaPorSensacionalista() = false
+
+}
+
+class ArticuloComun inherits Noticia {
+  var property  links = []
+  override method criterioCopada() = links.size() >= 2
+}
+
+class Chivo inherits Noticia {
+  const montoPagado
+  override method criterioCopada() = montoPagado > 2000000
+}
+
+class Reportaje inherits Noticia {
+  const property entrevistado
+  override method criterioCopada() = entrevistado.size().odd()
+  override method esPreferidaPorSensacionalista() = entrevistado == "Dibu Martínez"
+}
+class Cobertura inherits Noticia {
+  const property relacionadas = []
+  override method criterioCopada() = relacionadas.all({noticia => noticia.esCopada()})
+}
+//Punto 2
+class Periodista {
+  var property nombre
+  const property fechaIngreso
+  const property noticiasPublicadas = []
+
+  method esReciente() = fechaIngreso > new Date().minusYears(1)
+  method prefiere(noticia)
+
+ //Punto 3
+  method puedePublicar(noticia) {
     
-}
-object guitarraFenderNegra{
-    const color = "negra"
-
-    method afinado() = true
-    method costo() = if (color == "negra") 15 else 10
-    method esValioso() = true
-} 
-object guitarraFenderRoja{
-    const color = "roja"
-
-    method afinado() = true
-    method costo() = if (color == "roja") 15 else 10
-    method esValioso() = true
-} */
-
-//Integrante 1
-object trompetaJupiter {
-   
-}
-
-//Integrante 2
-
-object pianoBechstein {
-    const anchoHabitacion = 5
-    const largoHabitacion = 5
-    var fechaUltimaRevision = "2025-10-01"
-
-    method metrosCuadrados() = anchoHabitacion * largoHabitacion
-    method afinado() = self.metrosCuadrados() > 20
-    method costo() = 2 * anchoHabitacion
-    method esValioso() = self.afinado()
-
-    method revisar(fecha) {
-        fechaUltimaRevision = fecha
+    const noticiasHoy = noticiasPublicadas.filter({ noticia => noticia.fecha()== new Date() })
+    const noPreferidasHoy = noticiasHoy.filter({ noticia => !self.prefiere(noticia) })
+    return self.prefiere(noticia) || noPreferidasHoy.size() < 2
+  }
+  method publicar(noticia) {
+    if (!self.puedePublicar(noticia)) {
+      throw new Exception(message = "No puede publicar más noticias no preferidas hoy")
     }
-}
-//Integrante 3
-
-
-// Todos los Intregrantes (Musicos)
-object johann {
-    const instrumento = trompetaJupiter
-
-    method esFeliz() = instrumento.costo() > 20
-}
-object wolfgang {
-    method esFeliz() = johann.esFeliz()
+    if (!noticia.estaBienEscrita()) {
+      throw new Exception(message = "La noticia no está bien escrita")
+    }
+    noticiasPublicadas.add(noticia)
+  }
 }
 
-//Integrante 1
-
-//Integrante 2
-/*object giuseppe {
-    const instrumento = guitarraFenderNegra
-
-    method esFeliz() = instrumento.estaAfinada()
+class Copado inherits Periodista {
+  override method prefiere(noticia) = noticia.esCopada()
 }
-*/
-//Integrante 3
+
+class Sensacionalista inherits Periodista {
+  override method prefiere(noticia) =
+    noticia.titulo().contains("espectacular") || 
+    noticia.titulo().contains("increíble") || 
+    noticia.titulo().contains("grandioso") ||
+    noticia.esPreferidaPorSensacionalista()
+}
+
+class Vago inherits Periodista {
+  override method prefiere(noticia) =
+    Chivo || noticia.cantidadPalabras() < 100
+}
+
+class JoseDeZer inherits Periodista {
+  override method prefiere(noticia) = noticia.titulo().startsWith("T")
+}
+
+//Punto 4
+object multimedio {
+  var property periodistas = []
+
+  method periodistasRecientesActivos() =
+    periodistas.filter({periodista =>
+      periodista.esReciente() && periodista.any({noticia => noticia.fecha().daysTo(new Date()) <= 7})
+    })
+}
+
+
+
