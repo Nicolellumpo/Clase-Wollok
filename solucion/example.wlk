@@ -3,60 +3,66 @@
 //Punto 1 
 class Noticia {
   const property fecha 
-  var property periodista
-  var property importancia
+  const property importancia // es const para q sea mas mutable
   var property titulo
   var property desarrollo 
-
+ 
+ //Template Method 
   method esCopada() =
-    self.tieneImportanciaSuficiente() &&
+    self.esSuficiente() &&
     self.esReciente() &&
-    self.criterioCopada()
+    self.criterioCopada() // es la condicion particulat de template method
 
-  method tieneImportanciaSuficiente() = importancia >= 8
-  method esReciente() = fecha > new Date().minusDays(3)
+  method esSuficiente() = importancia >= 8
+  method esReciente() = fecha > new Date().minusDays(3) // tambein es valido 
+  // method esReciente() = new Date() - fecha < 3 
   method criterioCopada()
 
   method cantidadPalabras() = desarrollo.size()
   method estaBienEscrita() =titulo.size() >= 2 && desarrollo.size() > 0
 
-  method esPreferidaPorSensacionalista() = false
+  //method esPreferidaPorSensacionalista() = false
 
+  method esSensacionalista() = 
+    self.titulo().contains (["espectacular" , "increíble" , "grandioso"])
+
+  method tituloContienePalabras(palabras) =
+    palabras.any{ palabra => titulo.contains(palabra) }
+
+  method aptaParaVago() = desarrollo.words().length()<100
+
+  method esPreferidoPorAutor() = autor.prefiere(self)
 }
 
 class ArticuloComun inherits Noticia {
-  var property  links = []
-  override method criterioCopada() = links.size() >= 2
+  const links = []
+  override method criterioCopada() = links.size() > 2
 }
-
 class Chivo inherits Noticia {
-  const montoPagado
+  const property montoPagado
   override method criterioCopada() = montoPagado > 2000000
 }
-
 class Reportaje inherits Noticia {
   const property entrevistado
   override method criterioCopada() = entrevistado.size().odd()
-  override method esPreferidaPorSensacionalista() = entrevistado == "Dibu Martínez"
+  override method esSensacionalista() = super() && entrevistado == "Dibu Martínez"
 }
 class Cobertura inherits Noticia {
-  const property relacionadas = []
-  override method criterioCopada() = relacionadas.all({noticia => noticia.esCopada()})
+  const noticias = []
+  override method criterioCopada() = noticias.all{noticia => noticia.esCopada()}
 }
 //Punto 2
 class Periodista {
-  var property nombre
   const property fechaIngreso
-  const property noticiasPublicadas = []
+  const  noticiasPublicadas = []
 
   method esReciente() = fechaIngreso > new Date().minusYears(1)
   method prefiere(noticia)
 
  //Punto 3
   method puedePublicar(noticia) {
-    
-    const noticiasHoy = noticiasPublicadas.filter({ noticia => noticia.fecha()== new Date() })
-    const noPreferidasHoy = noticiasHoy.filter({ noticia => !self.prefiere(noticia) })
+    const noticiasHoy = noticiasPublicadas.filter{ noticia => noticia.fecha()== new Date() }
+    const noPreferidasHoy = noticiasHoy.filter{ noticia => !self.prefiere(noticia) }
     return self.prefiere(noticia) || noPreferidasHoy.size() < 2
   }
   method publicar(noticia) {
@@ -70,36 +76,52 @@ class Periodista {
   }
 }
 
-class Copado inherits Periodista {
-  override method prefiere(noticia) = noticia.esCopada()
+object copado{
+  method prefiere(noticia) = noticia.esCopada()
 }
-
-class Sensacionalista inherits Periodista {
-  override method prefiere(noticia) =
-    noticia.titulo().contains("espectacular") || 
+object esSensacionalista {
+  method prefiere(noticia) = noticia.esSensacionalista()
+    /*noticia.titulo().contains("espectacular") || 
     noticia.titulo().contains("increíble") || 
     noticia.titulo().contains("grandioso") ||
-    noticia.esPreferidaPorSensacionalista()
+    noticia.esPreferidaPorSensacionalista()*/
 }
-
-class Vago inherits Periodista {
-  override method prefiere(noticia) =
-    Chivo || noticia.cantidadPalabras() < 100
+object vago  {
+  method prefiere(noticia) = noticia.aptaParaVago()
+    //Chivo || noticia.cantidadPalabras() < 100
 }
-
-class JoseDeZer inherits Periodista {
-  override method prefiere(noticia) = noticia.titulo().startsWith("T")
+object joseDeZer {
+  method prefiere(noticia) = noticia.titulo().startsWith("T")
 }
 
 //Punto 4
 object multimedio {
-  var property periodistas = []
+  const periodistas = []
 
   method periodistasRecientesActivos() =
     periodistas.filter({periodista =>
-      periodista.esReciente() && periodista.any({noticia => noticia.fecha().daysTo(new Date()) <= 7})
+      periodista.esReciente() && periodista.any{noticia => noticia.fecha().daysTo(new Date()) <= 7}
     })
 }
 
+//punto 3
+
+object medioDeComunicacion {
+  const noticias = []
+
+  method agregarNoticia(noticia) {
+    self.validarCantidadDeNoticiasNoPreferidas(noticia)
+
+    noticias.add(noticia)
+  }
+  method validarCantidadDeNoticiasNoPreferidas(noticia) {
+    //if(!noticia.esPreferidoPorAutor( |&& self.limiteDeNoticiasNoPreferidaPara(noticia.autor())))
+      throw new DomainException(message = "El autor ha superado el límite de noticias no preferidas")
+    }
+    method limiteDeNoticiasNoPreferidaPara(autor) = 
+      noticias.count{ noticia => !autor.prefiere(noticia) && 
+      noticia.autor() == autor  && 
+      noticia.esDeLaFecha(new Date())} > 2
+  }
 
 
