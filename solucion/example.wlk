@@ -1,97 +1,99 @@
-//EJECICO PRE-PARCIAL - Noticias de ayer , extra
-
+ //EJECICO PRE-PARCIAL - Noticias de ayer , extra
 //Punto 1 
 class Noticia {
   const property fecha 
   const property importancia // es const para q sea mas mutable
-  var property titulo
-  var property desarrollo 
+  const property titulo
+  const property desarrollo 
+  const property autor
  
  //Template Method 
   method esCopada() =
-    self.esSuficiente() &&
+    self.esImportante() &&
     self.esReciente() &&
-    self.criterioCopada() // es la condicion particulat de template method
+    self.esCopadaEspecifica() // es la condicion particulat de template method
 
-  method esSuficiente() = importancia >= 8
-  method esReciente() = fecha > new Date().minusDays(3) // tambein es valido 
-  // method esReciente() = new Date() - fecha < 3 
-  method criterioCopada()
+  method esImportante() = importancia >= 8
 
-  method cantidadPalabras() = desarrollo.size()
-  method estaBienEscrita() =titulo.size() >= 2 && desarrollo.size() > 0
+  //method esReciente() = fecha > new Date().minusDays(3) // tambein es valido 
+  method esReciente() = new Date() - fecha < 3 
 
+  method esCopadaEspecifica() // Primitiva
+
+  
+  //method estaBienEscrita() =titulo.size() >= 2 && desarrollo.size() > 0
   //method esPreferidaPorSensacionalista() = false
+  method esSensacionalista() = self.titulo().contains (["espectacular" , "increíble" , "grandioso"])
 
-  method esSensacionalista() = 
-    self.titulo().contains (["espectacular" , "increíble" , "grandioso"])
-
-  method tituloContienePalabras(palabras) =
-    palabras.any{ palabra => titulo.contains(palabra) }
+  method tituloContiene(palabras) = palabras.any{ titulo => titulo.contains(palabras) }
 
   method aptaParaVago() = desarrollo.words().length()<100
 
+  method tituloEmpiezaCon(letra) = titulo.startsWith(letra) //Chequeo para joseDeZer
+  
   method esPreferidoPorAutor() = autor.prefiere(self)
+
+  method cantidadDePalabrasEnTitulo() = titulo.words().size()
+
+  method validarTitulo() {
+    if (self.cantidadDePalabrasEnTitulo() < 2) 
+      throw new DomainException(message = "El título debe tener al menos dos palabras")
+  }
+
+  method validarContenido() {
+    if (desarrollo.size() == " ") 
+      throw new DomainException(message = "El desarrollo no puede estar vacío")
+  }
+
+  method validarBienEscrita() {
+    self.validarTitulo() 
+    self.validarContenido()
+  }
+
+  method esNueva() = new Date() - fecha < 6
+
+  method tieneAutorReciente() = autor.esReciente()
+
 }
 
-class ArticuloComun inherits Noticia {
+class NoticiaComun inherits Noticia {
   const links = []
-  override method criterioCopada() = links.size() > 2
+  override method esCopadaEspecifica() = links.size() > 2
 }
 class Chivo inherits Noticia {
   const property montoPagado
-  override method criterioCopada() = montoPagado > 2000000
+  override method esCopadaEspecifica() = montoPagado > 2000000
+  override method aptaParaVago() = true
 }
 class Reportaje inherits Noticia {
   const property entrevistado
-  override method criterioCopada() = entrevistado.size().odd()
+  override method esCopadaEspecifica() = entrevistado.size().odd()
   override method esSensacionalista() = super() && entrevistado == "Dibu Martínez"
 }
 class Cobertura inherits Noticia {
   const noticias = []
-  override method criterioCopada() = noticias.all{noticia => noticia.esCopada()}
+  override method esCopadaEspecifica() = noticias.all{noticia => noticia.esCopada()}
 }
 //Punto 2
 class Periodista {
   const property fechaIngreso
-  const  noticiasPublicadas = []
+  var property preferencia  
 
-  method esReciente() = fechaIngreso > new Date().minusYears(1)
-  method prefiere(noticia)
-
- //Punto 3
-  method puedePublicar(noticia) {
-    const noticiasHoy = noticiasPublicadas.filter{ noticia => noticia.fecha()== new Date() }
-    const noPreferidasHoy = noticiasHoy.filter{ noticia => !self.prefiere(noticia) }
-    return self.prefiere(noticia) || noPreferidasHoy.size() < 2
-  }
-  method publicar(noticia) {
-    if (!self.puedePublicar(noticia)) {
-      throw new Exception(message = "No puede publicar más noticias no preferidas hoy")
-    }
-    if (!noticia.estaBienEscrita()) {
-      throw new Exception(message = "La noticia no está bien escrita")
-    }
-    noticiasPublicadas.add(noticia)
-  }
+  method esReciente() = new Date() - fechaIngreso < 365
+  method prefiere(noticia) = preferencia.prefiere(noticia)
 }
 
-object copado{
+object noticiaCopada{
   method prefiere(noticia) = noticia.esCopada()
 }
-object esSensacionalista {
+object noticiaSensacionalista {
   method prefiere(noticia) = noticia.esSensacionalista()
-    /*noticia.titulo().contains("espectacular") || 
-    noticia.titulo().contains("increíble") || 
-    noticia.titulo().contains("grandioso") ||
-    noticia.esPreferidaPorSensacionalista()*/
 }
 object vago  {
   method prefiere(noticia) = noticia.aptaParaVago()
-    //Chivo || noticia.cantidadPalabras() < 100
 }
 object joseDeZer {
-  method prefiere(noticia) = noticia.titulo().startsWith("T")
+  method prefiere(noticia) = noticia.tituloEmpiezaCon("T")
 }
 
 //Punto 4
@@ -109,19 +111,28 @@ object multimedio {
 object medioDeComunicacion {
   const noticias = []
 
+  method periodistasRecientesPublicaron() = 
+    self.noticiasNuevasPeriodistaRecientes().map{noticia => noticia.autor()}.asSet()
+
   method agregarNoticia(noticia) {
     self.validarCantidadDeNoticiasNoPreferidas(noticia)
-
+    noticia.validarBienEscrita()
     noticias.add(noticia)
   }
+
   method validarCantidadDeNoticiasNoPreferidas(noticia) {
-    //if(!noticia.esPreferidoPorAutor( |&& self.limiteDeNoticiasNoPreferidaPara(noticia.autor())))
+    if(!noticia.esPreferidoPorAutor() && self.limiteDeNoticiasNoPreferidaPara(noticia.autor()))
       throw new DomainException(message = "El autor ha superado el límite de noticias no preferidas")
     }
     method limiteDeNoticiasNoPreferidaPara(autor) = 
-      noticias.count{ noticia => !autor.prefiere(noticia) && 
+      noticias.count({ noticia => !autor.prefiere(noticia) && 
       noticia.autor() == autor  && 
-      noticia.esDeLaFecha(new Date())} > 2
+      noticia.esDeHoy(new Date())}) == 2
+
+  method noticiasNuevasPeriodistaRecientes() = noticias.filter{
+    noticia => noticia.esNueva() && noticia.tieneAutorReciente()}
   }
 
+ 
+    
 
