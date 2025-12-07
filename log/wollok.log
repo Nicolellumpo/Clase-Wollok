@@ -1,0 +1,19 @@
+{"level":"info","message":"⌛ Building environment","timeElapsed":211,"timestamp":"2025-12-07T14:01:13.438Z"}
+{"level":"info","message":"⌛ Building environment","timeElapsed":182,"timestamp":"2025-12-07T14:01:13.625Z"}
+{"level":"info","message":"⌛ Building environment","timeElapsed":123,"timestamp":"2025-12-07T14:01:13.750Z"}
+{"level":"info","message":"⌛ Building environment","timeElapsed":191,"timestamp":"2025-12-07T14:01:13.972Z"}
+{"level":"info","message":"⌛ Validating solucion/parciales.wlk","timeElapsed":175,"timestamp":"2025-12-07T14:01:14.148Z"}
+{"level":"info","message":"⌛ Building environment","timeElapsed":135,"timestamp":"2025-12-07T14:01:14.289Z"}
+{"level":"info","message":"⌛ Validating solucion/testExample.wtest","timeElapsed":147,"timestamp":"2025-12-07T14:01:14.447Z"}
+{"level":"info","message":"⌛ Validating solucion/example.wlk","timeElapsed":234,"timestamp":"2025-12-07T14:01:14.686Z"}
+{"level":"info","message":"⌛ Validating solucion/parciales.wlk","timeElapsed":190,"timestamp":"2025-12-07T14:01:14.876Z"}
+{"level":"info","message":"⌛ Validating solucion/testExample.wtest","timeElapsed":142,"timestamp":"2025-12-07T14:01:15.019Z"}
+{"level":"info","message":"⌛ Validating solucion/parciales.wlk","timeElapsed":106,"timestamp":"2025-12-07T14:01:15.275Z"}
+{"level":"info","message":"⌛ Building environment","timeElapsed":124,"timestamp":"2025-12-07T14:02:59.965Z"}
+{"level":"info","message":"⌛ Building environment","timeElapsed":153,"timestamp":"2025-12-07T14:03:00.120Z"}
+{"level":"info","message":"⌛ Validating solucion/1erParcialT1.wlk","timeElapsed":108,"timestamp":"2025-12-07T14:03:00.329Z"}
+{"level":"info","message":"Removing diagnostics from /c:/Desktop/Personal/Clase-Wollok/solucion/parciales.wlk","timestamp":"2025-12-07T14:03:00.329Z"}
+{"level":"info","message":"⌛ Validating 1erParcialT2.wlk","timeElapsed":103,"timestamp":"2025-12-07T14:03:30.923Z"}
+{"level":"info","message":"Removing diagnostics from /c:/Desktop/Personal/Clase-Wollok/1erParcialT2","timestamp":"2025-12-07T14:03:30.923Z"}
+{"level":"info","message":"⌛ Building environment","timeElapsed":125,"timestamp":"2025-12-07T14:04:03.219Z"}
+{"level":"info","message":"Removing diagnostics from /c:/Desktop/Personal/Clase-Wollok/1erParcialT2.wlk","timestamp":"2025-12-07T14:04:03.423Z"}

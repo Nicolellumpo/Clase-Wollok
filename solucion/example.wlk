@@ -11,49 +11,30 @@ class Noticia {
   method esCopada() =
     self.esImportante() &&
     self.esReciente() &&
-    self.esCopadaEspecifica() // es la condicion particulat de template method
-
+    self.esCopadaEspecifica() // es la condicion particular de template method
   method esImportante() = importancia >= 8
-
   //method esReciente() = fecha > new Date().minusDays(3) // tambein es valido 
   method esReciente() = new Date() - fecha < 3 
-
   method esCopadaEspecifica() // Primitiva
-
-  
-  //method estaBienEscrita() =titulo.size() >= 2 && desarrollo.size() > 0
-  //method esPreferidaPorSensacionalista() = false
   method esSensacionalista() = self.titulo().contains (["espectacular" , "increíble" , "grandioso"])
-
-  method tituloContiene(palabras) = palabras.any{ titulo => titulo.contains(palabras) }
-
   method aptaParaVago() = desarrollo.words().length()<100
-
-  method tituloEmpiezaCon(letra) = titulo.startsWith(letra) //Chequeo para joseDeZer
-  
-  method esPreferidoPorAutor() = autor.prefiere(self)
-
+  method tituloEmpiezaCon(letra) = titulo.startsWith(letra)
   method cantidadDePalabrasEnTitulo() = titulo.words().size()
-
   method validarTitulo() {
     if (self.cantidadDePalabrasEnTitulo() < 2) 
       throw new DomainException(message = "El título debe tener al menos dos palabras")
   }
-
   method validarContenido() {
     if (desarrollo.size() == " ") 
       throw new DomainException(message = "El desarrollo no puede estar vacío")
   }
-
   method validarBienEscrita() {
     self.validarTitulo() 
     self.validarContenido()
   }
-
+  method esPreferidoPorAutor() = autor.prefiere(self)
   method esNueva() = new Date() - fecha < 6
-
   method tieneAutorReciente() = autor.esReciente()
-
 }
 
 class NoticiaComun inherits Noticia {
@@ -135,4 +116,13 @@ object medioDeComunicacion {
 
  
     
+object nicole {
+  const nacimiento = 2003
+  var property saldo = 0 
+ 
+  method edad(anio) = anio - nacimiento
 
+  method depositar(monto) {
+    saldo = saldo + monto
+  }
+}
