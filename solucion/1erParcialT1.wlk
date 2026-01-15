@@ -4,80 +4,86 @@ class Juez {
     const property nombre
 }
 class Causa {
-  const jueces = []
+  const property jueces = []
   var property montoBase
-  method perjuicioEconomico() {
-    montoBase + self.montoExtra()
-  }
+  var property caratula
+
+  //template method
+  method perjuicioEconomico() = montoBase + self.montoExtra()
   method montoExtra()
-   method tieneJuezAmigo(juez) {
-    jueces.any{j => j == juez}
-  }
+   
   method aumentarMontoBaseEn(valor) {
     montoBase = montoBase + valor
   }
+  //method perjucionMayorA() = self.perjuicioEconomico() * 0.5
 }
 
 class Soborno inherits Causa {
-  var property hayArrepentidos
+  var property hayArrepentidos 
   override method montoExtra() {
-    //hayArrepentidos ? 1 : 2
+   if(hayArrepentidos > 0) 1 else 2
   }
 }
 
 class ObraPublica inherits Causa {
+  override method montoBase() =  3
+  override method jueces() = ["Dr. Ana Lisis", "Dr. Juan Tiler", "Dra. Alina Fante"]
+
   override method montoExtra() {
-    //jueces.size() > 2 ? 2 : 0
+   if(jueces.size()< 2 ) 2 else 0 
   }
 }
 
 class Compleja inherits Causa {
   const subCausas = []
-  override method montoExtra() {
-    subCausas.sum {c => c.perjuicioEconomico()}
-  }
+  override method montoExtra() = subCausas.map {causa => causa.perjuicioEconomico()}. sum()
 }
 
 class Funcionario {
-  var property nombre
   var property patrimonio
-  var property causas = []
-  var property propuestas = []
-  var property cargo // instancia de clase Cargo
+  const property causas = []
+  var property cargo 
+  const property juecesAmigos = []
 
-  method comerse(causa) {
-    cargo.validarCausaPara(self, causa)
+  method patrimonioMinimo() {
+    if (!patrimonio < 0)
+      throw new Exception(message = "Patrimonio insuficiente")
+  }
+  //method patrimonioMaximo() = patrimonio > perjuicioMayorA()
+  method aceptarCausa(causa) {
+    self.patrimonioMinimo()
+    cargo.validarCausa(self, causa)
     causas.add(causa)
   }
-  method causasTrambolikas() {
-    causas.filter{c => c.esTramboliko()}
+  method tieneJuezAmigo(causa) {
+    juecesAmigos.any{ juezAmigo => causa.jueces().contains(juezAmigo) }
   }
   method salirEnMedios() {
-    causas.forEach{c => c.aumentarMontoBaseEn(0.1)}
+    causas.forEach{causa => causa.aumentarMontoBaseEn(0.1)}
   }
-  method escucharPropuesta(propuesta) {
-    cargo.procesarPropuestaPara(self, propuesta)
+  method aceptarPropuesta(propuesta) {
+    cargo.validarPropuesta(self, propuesta)
   }
 }
 
-class Ejecutivo {
-  var property juezAmigo
-  var property palabrasClave = ["aumento", "impuestos", "inflación"]
+object ejecutivo {
 
-  method validarCausaPara(funcionario, causa) {
+  method validarCausa(funcionario, causa) {
     if (funcionario.patrimonio() < causa.perjuicioEconomico())
       throw new Exception(message ="Patrimonio insuficiente")
-    if (!causa.tieneJuezAmigo(juezAmigo))
+  }
+
+  method validarPropuesta(propuesta) {
+    if (!propuesta.tieneJuezAmigo())
       throw new  Exception(message ="No tiene juez amigo")
   }
 }
 
-class Ministro {
+object ministro {
   method validarCausaPara(funcionario, causa) {
     if (funcionario.patrimonio()< causa.perjuicioEconomico() / 2)
       throw new Exception(message = "Ministro con patrimonio menor al 50% del perjuicio")
   }
-
   method procesarPropuestaPara(funcionario, propuesta) {
     if (propuesta.esPedidoCorto())
       funcionario.propuestas().add(propuesta)
@@ -90,15 +96,15 @@ class Ministro {
 class Propuesta {
   var property descripcion
   var property fechaPresentacion
-  var fechaCumplimiento
+  var property fechaCumplimiento
+  var property palabrasClave = ["aumento", "impuestos", "inflación"]
 
-  method esPedidoCorto() {
-    fechaCumplimiento - fechaPresentacion < 365
-  }
-  method contienePalabraClave(palabra) {
-    descripcion.includes(palabra)
+  method esPedidoCorto() = fechaCumplimiento.year() - fechaPresentacion.year() < 1
+
+  method contienePalabraClave(palabraClave) {
+    descripcion.contains(palabraClave)
   }
   method postergar() {
-    fechaCumplimiento = fechaPresentacion + 1460 // 4 años
+    fechaCumplimiento = fechaPresentacion.plusYears(4)
   }
 }
