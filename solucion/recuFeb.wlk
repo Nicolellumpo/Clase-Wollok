@@ -189,4 +189,47 @@ class Corral{
             } else super(ejercito)
         }
     }
-    
+ //------------------------------------------ Practica Video 23------------------------------------------   
+  class Impresora{
+    const cabezal
+    var property ocupada
+
+    method trazar(recorrido){}
+
+    method mostrarEnPantalla(mensaje){}
+    /*1 method puedeImprimir(documento){ cabezal.puedeEyectar(documento.tinta()) }*/
+    method imprimir(documento){
+        if(ocupada) throw new Exception( message = "Impresora ocupada")
+        cabezal.eyectar(documento.tinta())
+        self.trazar(documento.recorrido())
+    }
+  }
+  class Cabezal{
+    const eficiencia
+    const cartucho
+
+    method liberar(){}
+    /*1 method puedeEyectar(cantidad){ cartucho.tieneCarga(1 / cantidad * eficiencia) }*/
+    method eyectar(cantidad){
+        cartucho.extarer(1 / cantidad * eficiencia)
+        self.liberar()
+    }
+  }
+
+  class Cartucho{
+    var carga
+
+    /*1 method tieneCarga(cantidad){carga >= cantidad }*/
+
+    //puede pasar que la carga sea negativa
+    method extarer(cantidad){
+        if(carga < cantidad) 
+            throw new Exception( message = "Sin carga")
+            carga = carga - cantidad
+        //usar if solamente no es lo mejor en este caso ya q va a tratar de trazar y 
+        //liberar sin tener tinta ademas de esta manera no se sabe donde esta el error
+        //por eso es mejor usar throw new Exception
+    }
+  }
+    /*1 el problema de esta implementacion es q no siempre es importante saber 
+    que debo mandar un mensaje antes q otro */
